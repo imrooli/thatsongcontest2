@@ -1,86 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Song Ranking Sorter</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-  }
-  .song {
-    display: inline-block;
-    width: 200px;
-    height: 100px;
-    border: 1px solid #000;
-    margin: 10px;
-    cursor: pointer;
-  }
-  #ranking {
-    text-align: left;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>That So...ng Contest Sorter</title>
+  <style>
+    body {
+      font-family: 'Times New Roman', serif;
+      text-align: center;
+    }
+    .middleField {
+      width: 120px;
+      height: 70px;
+      border: 1px solid #000;
+      cursor: pointer;
+    }
+    /* Style for pink links */
+    a {
+      color: pink;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
-<body>
-<h1>Song Ranking Sorter</h1>
-<p>Pick which song you like better in each battle to get an accurate list of your favorite songs from the playlist.</p>
-<div id="battle">
-  <div class="song" onclick="sortList(-1)"></div>
-  <div class="song" onclick="sortList(0)">I like both</div>
-  <div class="song" onclick="sortList(1)"></div>
-</div>
-<div id="ranking"></div>
-
-<script>
-var songs = [
-  "You Give Love A Bad Name",
-  "Tu Eres",
-  "Two of Hearts",
-  // ... (add more songs)
-];
-
-var ranking = [];
-var currentBattle = 0;
-
-function init() {
-  ranking = [];
-  currentBattle = 0;
-  shuffleArray(songs);
-  displayBattle();
-}
-
-function displayBattle() {
-  var battleDiv = document.getElementById("battle");
-  battleDiv.children[0].textContent = songs[currentBattle];
-  battleDiv.children[2].textContent = songs[currentBattle + 1];
-}
-
-function sortList(choice) {
-  ranking.push(choice === 0 ? currentBattle : choice);
-  currentBattle += 2;
-  if (currentBattle < songs.length) {
-    displayBattle();
-  } else {
-    displayRanking();
-  }
-}
-
-function displayRanking() {
-  var rankingDiv = document.getElementById("ranking");
-  rankingDiv.innerHTML = "<h2>Your Ranking:</h2>";
-  for (var i = 0; i < ranking.length; i++) {
-    rankingDiv.innerHTML += "<p>" + (i + 1) + ". " + songs[ranking[i]] + "</p>";
-  }
-}
-
-function shuffleArray(array) {
-  for (var i = array.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
-
-init();
-</script>
+<body text="#000000" bgcolor="#ffffff">
+  <p class="instructions">
+    <center>
+      <br><br>
+      <b>THAT SO...NG CONTEST SORTERS</b><br>
+      <br>
+      this is an index of all playlist ranking sorters for that so...ng contest, available for your personal use! you can use these tools to help rank the songs for the theme of the week.<br><br>
+    </center>
+  </p>
+  
+  <!-- Links to HTML files -->
+  <div>
+    <a href="tsc1.html">songs under 10m streams</a><br>
+    <a href="tsc2.html">the 1980's</a><br>
+    <!-- Add more links for each HTML file -->
+  </div>
 </body>
 </html>
