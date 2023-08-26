@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Song Sorter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    #title {
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    #instructions {
+      font-size: 18px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .sortable-option {
+      width: 120px;
+      height: 150px;
+      border: 1px solid #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin: 5px;
+      background-color: #ffffff;
+      transition: background-color 0.2s;
+    }
+
+    .sortable-option:hover {
+      background-color: #e0e0e0;
+    }
+
+    #middleField {
+      height: 70px;
+    }
+
+    #resultField {
+      font-size: 18px;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="title">Song Sorter</div>
+  <div id="instructions">
+    <b>THAT'S SO...NG CONTEST - THEME: 1980's</b><br>
+    Pick which song you like better in each battle to get an accurate list of your favorite songs from the playlist.<br>
+    Note: Hitting 'I like both' frequently may affect your results.
+  </div>
+  <div id="battleNumber">Battle #1<br>0% sorted.</div>
+  <div id="leftField" class="sortable-option"></div>
+  <div id="middleField" class="sortable-option">I like both</div>
+  <div id="rightField" class="sortable-option"></div>
+  <div id="resultField"></div>
+
+
+<script>
+  const namMember = [...Array(22).keys()].map(String);
+
+  let lstMember = [];
+  let equal = [];
+  let rec = [];
+  let cmp1, cmp2;
+  let head1, head2;
+  let nrec, numQuestion, totalSize, finishSize, finishFlag;
+
+  function initList() {
+    lstMember.push(namMember.map((_, i) => i));
+
+    totalSize = lstMember[0].length;
+    let n = 1;
+
+    for (const subList of lstMember) {
+      if (subList.length >= 2) {
+        const mid = Math.ceil(subList.length / 2);
+        lstMember[n] = subList.slice(0, mid);
+        totalSize += lstMember[n].length;
+        n++;
+        lstMember[n] = subList.slice(mid);
+        totalSize += lstMember[n].length;
+        n++;
+      }
+    }
+
+    rec = Array(namMember.length).fill(0);
+    nrec = 0;
+    equal = Array(namMember.length + 1).fill(-1);
+    cmp1 = lstMember.length - 2;
+    cmp2 = lstMember.length - 1;
+    head1 = 0;
+    head2 = 0;
+    numQuestion = 1;
+    finishSize = 0;
+    finishFlag = 0;
+  }
+
+  function sortList(flag) {
+  const currentList = flag < 0 ? lstMember[cmp1] : lstMember[cmp2];
+  const currentHead = flag < 0 ? head1 : head2;
+  const increment = flag !== 0 ? 1 : 2;
+
+  while (rec[nrec - 1] !== -1 || flag === 0) {
+    rec[nrec] = currentList[currentHead];
+    currentHead++;
+    nrec++;
+    finishSize++;
+  }
+
+  if (flag === 0) {
+    equal[rec[nrec - 1]] = currentList[currentHead];
+    rec[nrec] = currentList[currentHead];
+    currentHead++;
+    nrec++;
+    finishSize++;
+  }
+
+  if (currentHead >= currentList.length) {
+    if (flag < 0) cmp1 -= increment;
+    if (flag > 0) cmp2 -= increment;
+    currentList.splice(0, currentList.length, ...rec.slice(0, nrec));
+    nrec = 0;
+  }
+
+  if (cmp1 < 0) {
+    const str = `battle #${numQuestion - 1}<br>${Math.floor(
+      (finishSize * 100) / totalSize
+    )}% sorted.`;
+    document.getElementById("battleNumber").innerHTML = str;
+    showResult();
+    finishFlag = 1;
+  } else {
+    showImage();
+  }
+}
+
+
+  function showResult() {
+    let ranking = 1;
+    let sameRank = 1;
+    let str = `<table style="width:200px; font-size:18px; line-height:120%; margin-left:auto; margin-right:auto; border:1px solid #000; border-collapse:collapse" align="center">
+                <tr><td style="color:#ffffff; background-color:#e097d9; text-align:center;">rank</td><td style="color:#ffffff; background-color:#e097d9; text-align:center;">options</td></tr>`;
+
+    for (let i = 0; i < namMember.length; i++) {
+      str += `<tr><td style="border:1px solid #000; text-align:center; padding-right:5px;">${ranking}</td><td style="border:1px solid #000; padding-left:5px;">${namMember[lstMember[0][i]]}</td></tr>`;
+
+      if (i < namMember.length - 1) {
+        if (equal[lstMember[0][i]] === lstMember[0][i + 1]) {
+          sameRank++;
+        } else {
+          ranking += sameRank;
+          sameRank = 1;
+        }
+      }
+    }
+
+    str += "</table>";
+    document.getElementById("resultField").innerHTML = str;
+  }
+
+  function showImage() {
+    const str0 = `battle #${numQuestion}<br>${Math.floor((finishSize * 100) / totalSize)}% sorted.`;
+    const str1 = `${namMember[lstMember[cmp1][head1]]}`;
+    const str2 = `${namMember[lstMember[cmp2][head2]]}`;
+
+    document.getElementById("battleNumber").innerHTML = str0;
+    document.getElementById("leftField").innerHTML = str1;
+    document.getElementById("rightField").innerHTML = str2;
+
+    numQuestion++;
+  }
+
+  function toNameFace(n) {
+    return namMember[n];
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    initList();
+    showImage();
+  });
+</script>
+
+</body>
+</html>
